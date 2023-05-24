@@ -5,6 +5,7 @@ import pl.edu.agh.student.bazykino.model.Film;
 import pl.edu.agh.student.bazykino.repositories.FilmRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FilmService {
@@ -19,8 +20,12 @@ public class FilmService {
         return filmRepository.findAll();
     }
 
-    public Film getFilmById(long id){
-        return  filmRepository.getReferenceById(id);
+    public Optional<Film> getFilmById(long id){
+        return  filmRepository.findById(id);
+    }
+
+    public Optional<Film> getFilmByTitle(String title){
+        return filmRepository.getFilmByTitle(title);
     }
 
     public Film addFilm(Film film){

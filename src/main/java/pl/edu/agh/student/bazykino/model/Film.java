@@ -23,6 +23,7 @@ public class Film {
         return id;
     }
 
+    @Column(unique = true)
     public String getTitle() {
         return title;
     }

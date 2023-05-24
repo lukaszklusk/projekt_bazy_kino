@@ -8,14 +8,18 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.edu.agh.student.bazykino.model.Film;
 import pl.edu.agh.student.bazykino.model.Genre;
 import pl.edu.agh.student.bazykino.model.Screen;
+import pl.edu.agh.student.bazykino.model.Showing;
 import pl.edu.agh.student.bazykino.services.FilmService;
 import pl.edu.agh.student.bazykino.services.GenreService;
 import pl.edu.agh.student.bazykino.services.ScreenService;
+import pl.edu.agh.student.bazykino.services.ShowingService;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @RestController
@@ -24,12 +28,14 @@ public class DataController {
     private FilmService filmService;
     private GenreService genreService;
     private ScreenService screenService;
+    private ShowingService showingService;
 
     public DataController(FilmService filmService, GenreService genreService,
-                          ScreenService screenService) {
+                          ScreenService screenService, ShowingService showingService) {
         this.filmService = filmService;
         this.genreService = genreService;
         this.screenService = screenService;
+        this.showingService = showingService;
     }
 
     @GetMapping("/film")
@@ -117,6 +123,37 @@ public class DataController {
         Screen newScreen = screenService.addScreen(screen);
         if(newScreen != null){
             return ResponseEntity.ok(newScreen);
+        }else{
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/showings")
+    public ResponseEntity<List<Showing>> getAllShowings(){
+        return ResponseEntity.ok(showingService.getAllShowings());
+    }
+
+    @PostMapping("/showings")
+    public ResponseEntity<Showing> addShowing(@RequestBody Map<String, Object> payload){
+        if(!payload.containsKey("film") || !payload.containsKey("screen") ||
+                !payload.containsKey("dateTime")){
+            return ResponseEntity.badRequest().build();
+        }
+        Showing showing = new Showing();
+
+        Optional<Film> filmOptional = filmService.getFilmByTitle((String) payload.get("film"));
+        if(filmOptional.isPresent()) showing.setFilm(filmOptional.get());
+        else return ResponseEntity.badRequest().build();
+
+        Optional<Screen> screenOptional = screenService.getScreenByNumber((Integer) payload.get("screen"));
+        if(screenOptional.isPresent()) showing.setScreen(screenOptional.get());
+        else return ResponseEntity.badRequest().build();
+
+        showing.setDateTime(LocalDateTime.parse((String) payload.get("dateTime"),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+        Showing newShowing = showingService.addShowing(showing);
+        if(newShowing != null){
+            return ResponseEntity.ok(newShowing);
         }else{
             return ResponseEntity.badRequest().build();
         }

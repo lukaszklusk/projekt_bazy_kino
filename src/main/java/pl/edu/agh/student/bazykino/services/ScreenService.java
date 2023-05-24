@@ -28,5 +28,9 @@ public class ScreenService {
         return screenRepository.save(screen);
     }
 
+    public Optional<Screen> getScreenByNumber(int number){
+        return screenRepository.getScreenByScreenNumber(number);
+    }
+
 
 }
