@@ -5,6 +5,7 @@ import pl.edu.agh.student.bazykino.model.Genre;
 import pl.edu.agh.student.bazykino.repositories.GenreRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GenreService {
@@ -19,7 +20,7 @@ public class GenreService {
         return genreRepository.save(genre);
     }
 
-    public Genre getGenreByName(String name){
+    public Optional<Genre> getGenreByName(String name){
         return genreRepository.getGenreByName(name);
     }
 

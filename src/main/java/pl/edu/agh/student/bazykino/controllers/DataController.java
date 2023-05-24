@@ -44,7 +44,9 @@ public class DataController {
         film.setTitle((String) payload.get("title"));
         HashSet<Genre> genreSet = new HashSet<>();
         for(String genreStr: (List<String>) payload.get("genres")){
-            genreSet.add(genreService.getGenreByName(genreStr));
+            Optional<Genre> genre = genreService.getGenreByName(genreStr);
+            if(genre.isPresent()) genreSet.add(genre.get());
+            else return ResponseEntity.badRequest().build();
         }
         film.setGenres(genreSet);
         film.setLength((Integer) payload.get("length"));
