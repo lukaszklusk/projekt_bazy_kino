@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.agh.student.bazykino.model.Film;
 import pl.edu.agh.student.bazykino.model.Genre;
+import pl.edu.agh.student.bazykino.model.Screen;
 import pl.edu.agh.student.bazykino.services.FilmService;
 import pl.edu.agh.student.bazykino.services.GenreService;
+import pl.edu.agh.student.bazykino.services.ScreenService;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,10 +23,13 @@ public class DataController {
 
     private FilmService filmService;
     private GenreService genreService;
+    private ScreenService screenService;
 
-    public DataController(FilmService filmService, GenreService genreService) {
+    public DataController(FilmService filmService, GenreService genreService,
+                          ScreenService screenService) {
         this.filmService = filmService;
         this.genreService = genreService;
+        this.screenService = screenService;
     }
 
     @GetMapping("/film")
@@ -91,5 +96,29 @@ public class DataController {
     @GetMapping("/genre")
     public ResponseEntity<List<Genre>> getGenres(){
         return ResponseEntity.ok(genreService.getAllGenres());
+    }
+
+    @GetMapping("/screen")
+    public ResponseEntity<List<Screen>> getScreens(){
+        return ResponseEntity.ok(screenService.getAllScreens());
+    }
+
+    @PostMapping("/screen")
+    public ResponseEntity<Screen> addScreen(@RequestBody Map<String, Object> payload){
+        if(!payload.containsKey("screenNumber") || !payload.containsKey("n_rows") ||
+            !payload.containsKey("n_columns")){
+            return ResponseEntity.badRequest().build();
+        }
+        Screen screen = new Screen();
+        screen.setScreenNumber((Integer) payload.get("screenNumber"));
+        screen.setN_rows((Integer) payload.get("n_rows"));
+        screen.setN_columns((Integer) payload.get("n_columns"));
+        screen.setSeats_total(screen.getN_columns() * screen.getN_rows());
+        Screen newScreen = screenService.addScreen(screen);
+        if(newScreen != null){
+            return ResponseEntity.ok(newScreen);
+        }else{
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

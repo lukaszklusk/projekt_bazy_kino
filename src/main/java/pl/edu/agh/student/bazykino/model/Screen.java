@@ -1,5 +1,6 @@
 package pl.edu.agh.student.bazykino.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -7,6 +8,7 @@ import jakarta.persistence.Id;
 @Entity
 public class Screen {
     private Long id;
+    private int screenNumber;
     private int n_rows;
     private int n_columns;
     private int seats_total;
@@ -43,5 +45,14 @@ public class Screen {
 
     public void setSeats_total(int seats_total) {
         this.seats_total = seats_total;
+    }
+
+    @Column(unique = true)
+    public int getScreenNumber() {
+        return screenNumber;
+    }
+
+    public void setScreenNumber(int screenNumber) {
+        this.screenNumber = screenNumber;
     }
 }
