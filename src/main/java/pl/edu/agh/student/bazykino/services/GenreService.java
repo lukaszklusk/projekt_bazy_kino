@@ -36,4 +36,8 @@ public class GenreService {
         genre.setName(newName);
         return genreRepository.save(genre);
     }
+
+    public void deleteGenre(Genre genre){
+        genreRepository.delete(genre);
+    }
 }

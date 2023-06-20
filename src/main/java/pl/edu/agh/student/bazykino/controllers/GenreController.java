@@ -60,4 +60,14 @@ public class GenreController {
     public ResponseEntity<List<Genre>> getGenres(){
         return ResponseEntity.ok(genreService.getAllGenres());
     }
+
+    @DeleteMapping("/genre/{id}")
+    public ResponseEntity<Genre> deleteGenre(@PathVariable long id){
+        Optional<Genre> genreOptional = genreService.getGenreById(id);
+        if(genreOptional.isEmpty()) return ResponseEntity.notFound().build();
+        else {
+            genreService.deleteGenre(genreOptional.get());
+            return ResponseEntity.ok(genreOptional.get());
+        }
+    }
 }
