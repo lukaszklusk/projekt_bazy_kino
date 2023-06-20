@@ -1,10 +1,7 @@
 package pl.edu.agh.student.bazykino.controllers;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.edu.agh.student.bazykino.model.Film;
 import pl.edu.agh.student.bazykino.model.Genre;
 import pl.edu.agh.student.bazykino.model.Screen;
@@ -43,6 +40,13 @@ public class DataController {
         return ResponseEntity.ok(filmService.getAllFilms());
     }
 
+    @GetMapping("/film/{id}")
+    public ResponseEntity<Film> getFilmById(@PathVariable long id){
+        Optional<Film> film = filmService.getFilmById(id);
+        if(film.isEmpty()) return ResponseEntity.badRequest().build();
+        else return ResponseEntity.ok(film.get());
+    }
+
     @PostMapping("/film")
     public ResponseEntity<Film> createFilm(@RequestBody Map<String, Object> payload){
         if(!payload.containsKey("title") || !payload.containsKey("director") ||
@@ -70,9 +74,10 @@ public class DataController {
         }
     }
 
+    //Test method
     @GetMapping("/img")
     public String getBase64Img(){
-        File file = new File("./orb.jpg");
+        File file = new File("./testimage.png");
         byte[] bytes = new byte[(int) file.length()];
         try(FileInputStream fis = new FileInputStream(file)) {
             fis.read(bytes);
