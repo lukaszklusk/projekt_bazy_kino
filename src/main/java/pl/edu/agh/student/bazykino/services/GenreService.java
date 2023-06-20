@@ -27,4 +27,13 @@ public class GenreService {
     public List<Genre> getAllGenres(){
         return genreRepository.findAll();
     }
+
+    public Optional<Genre> getGenreById(long id){
+        return genreRepository.findById(id);
+    }
+
+    public Genre renameGenre(Genre genre, String newName){
+        genre.setName(newName);
+        return genreRepository.save(genre);
+    }
 }

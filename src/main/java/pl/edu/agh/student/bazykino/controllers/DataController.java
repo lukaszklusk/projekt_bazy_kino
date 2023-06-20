@@ -43,7 +43,7 @@ public class DataController {
     @GetMapping("/film/{id}")
     public ResponseEntity<Film> getFilmById(@PathVariable long id){
         Optional<Film> film = filmService.getFilmById(id);
-        if(film.isEmpty()) return ResponseEntity.badRequest().build();
+        if(film.isEmpty()) return ResponseEntity.notFound().build();
         else return ResponseEntity.ok(film.get());
     }
 
@@ -101,6 +101,29 @@ public class DataController {
             return ResponseEntity.ok(newGenre);
         }else{
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/genre/{id}")
+    public ResponseEntity<Genre> getGenreById(@PathVariable long id){
+        Optional<Genre> genreOptional = genreService.getGenreById(id);
+        if(genreOptional.isPresent()) return ResponseEntity.ok(genreOptional.get());
+        else return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/genre/{id}")
+    public ResponseEntity<Genre> editGenre(@PathVariable long id,
+                                           @RequestBody Map<String,Object> payload){
+        if(!payload.containsKey("name")){
+            return ResponseEntity.badRequest().build();
+        }
+        Optional<Genre> genreOptional = genreService.getGenreById(id);
+        if(genreOptional.isEmpty()) return ResponseEntity.notFound().build();
+        else {
+            Genre response = genreService.renameGenre(genreOptional.get(),
+                    (String) payload.get("name"));
+            if(response == null) return ResponseEntity.internalServerError().build();
+            else return ResponseEntity.ok(response);
         }
     }
 
