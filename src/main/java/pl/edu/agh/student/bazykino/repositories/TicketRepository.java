@@ -5,6 +5,7 @@ import pl.edu.agh.student.bazykino.model.Showing;
 import pl.edu.agh.student.bazykino.model.Ticket;
 import pl.edu.agh.student.bazykino.model.TicketStatus;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 

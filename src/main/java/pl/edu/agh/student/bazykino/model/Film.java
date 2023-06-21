@@ -40,7 +40,7 @@ public class Film {
         this.director = director;
     }
 
-    @OneToMany
+    @ManyToMany
     public Set<Genre> getGenres() {
         return genres;
     }

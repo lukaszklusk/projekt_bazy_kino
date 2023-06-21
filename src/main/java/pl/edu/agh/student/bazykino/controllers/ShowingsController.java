@@ -47,7 +47,6 @@ public class ShowingsController {
             return ResponseEntity.badRequest().build();
         }
         Showing showing = new Showing();
-
         Optional<Film> filmOptional = filmService.getFilmByTitle((String) payload.get("film"));
         if(filmOptional.isPresent()) showing.setFilm(filmOptional.get());
         else return ResponseEntity.badRequest().build();

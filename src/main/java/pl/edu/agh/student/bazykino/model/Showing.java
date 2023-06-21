@@ -1,9 +1,6 @@
 package pl.edu.agh.student.bazykino.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
@@ -24,7 +21,7 @@ public class Showing {
         return id;
     }
 
-    @OneToOne
+    @ManyToOne
     public Film getFilm() {
         return film;
     }
@@ -33,7 +30,7 @@ public class Showing {
         this.film = film;
     }
 
-    @OneToOne
+    @ManyToOne
     public Screen getScreen() {
         return screen;
     }

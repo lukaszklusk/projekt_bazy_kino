@@ -20,7 +20,7 @@ public class Ticket {
         return id;
     }
 
-    @OneToOne
+    @ManyToOne
     public Showing getShowing() {
         return showing;
     }
