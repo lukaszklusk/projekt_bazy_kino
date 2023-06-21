@@ -79,4 +79,9 @@ delimiter ;
 Przez API RESTowe backendu istnieje też dostęp do pewnych statystyk. Opbywa się to za pomocą 
 przesłania metodą `GET` odpowiedniego zapytania na endpoint pod mappingiem `/stats/`.
 
-
+Dostępne endpointy: 
+* `/stats/film/{filmId}` - pokazuje statystyki dla filmu o danym ID, pożna podać jako parametry datę początkową i 
+końcową okresu, który nas interesuje
+* `/stats/film/top` - pokazuje filmy z największą ilością sprzedanych biletów, podobnie jak wyżej przyjmuje 
+początek i koniec pewnego interwału czasowego, ale też ilość pozycji do wyświetlenia (domyślnie 10)
+* `/stats/genre/top` - działa analogicznie do `/stats/film/top`, tyko że dla gatunków kinowych
