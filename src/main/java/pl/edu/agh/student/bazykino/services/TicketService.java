@@ -55,4 +55,8 @@ public class TicketService {
         ticket.setStatus(TicketStatus.cancelled);
         return ticketRepository.save(ticket);
     }
+
+    public void deleteTicket(Ticket ticket){
+        ticketRepository.delete(ticket);
+    }
 }
