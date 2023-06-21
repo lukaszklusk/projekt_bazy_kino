@@ -24,7 +24,7 @@ public class ScreenService {
         return screenRepository.findById(id);
     }
 
-    public Screen addScreen(Screen screen){
+    public Screen saveScreen(Screen screen){
         return screenRepository.save(screen);
     }
 
@@ -32,5 +32,7 @@ public class ScreenService {
         return screenRepository.getScreenByScreenNumber(number);
     }
 
-
+    public void deleteScreen(Screen screen){
+        screenRepository.delete(screen);
+    }
 }
