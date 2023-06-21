@@ -2,8 +2,12 @@ package pl.edu.agh.student.bazykino.services;
 
 import org.springframework.stereotype.Service;
 import pl.edu.agh.student.bazykino.model.Genre;
+import pl.edu.agh.student.bazykino.model.GenreCount;
 import pl.edu.agh.student.bazykino.repositories.GenreRepository;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,5 +43,17 @@ public class GenreService {
 
     public void deleteGenre(Genre genre){
         genreRepository.delete(genre);
+    }
+
+    public List<GenreCount> countTicketsForAllGenres(LocalDateTime start, LocalDateTime end){
+        return genreRepository.countTicketsForAllGenres(start, end);
+    }
+
+    public List<GenreCount> countTicketsForGenresIn(Collection<Genre> genres, LocalDateTime start, LocalDateTime end){
+        ArrayList<String> names = new ArrayList<>();
+        for(Genre g: genres){
+            names.add(g.getName());
+        }
+        return genreRepository.countTicketsForGenresIn(start, end, names);
     }
 }

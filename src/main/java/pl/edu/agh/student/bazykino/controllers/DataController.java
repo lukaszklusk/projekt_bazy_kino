@@ -2,11 +2,9 @@ package pl.edu.agh.student.bazykino.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.edu.agh.student.bazykino.model.Film;
-import pl.edu.agh.student.bazykino.model.Showing;
-import pl.edu.agh.student.bazykino.model.TicketStatus;
-import pl.edu.agh.student.bazykino.model.TicketsCount;
+import pl.edu.agh.student.bazykino.model.*;
 import pl.edu.agh.student.bazykino.services.FilmService;
+import pl.edu.agh.student.bazykino.services.GenreService;
 import pl.edu.agh.student.bazykino.services.ShowingService;
 import pl.edu.agh.student.bazykino.services.TicketService;
 
@@ -25,11 +23,13 @@ public class DataController {
     private final FilmService filmService;
     private final ShowingService showingService;
     private final TicketService ticketService;
+    private final GenreService genreService;
 
-    public DataController(FilmService filmService, ShowingService showingService, TicketService ticketService) {
+    public DataController(FilmService filmService, ShowingService showingService, TicketService ticketService, GenreService genreService) {
         this.filmService = filmService;
         this.showingService = showingService;
         this.ticketService = ticketService;
+        this.genreService = genreService;
     }
 
     @GetMapping("/stats/film/{filmId}")
@@ -68,19 +68,21 @@ public class DataController {
 
     @GetMapping("/stats/film/top")
     public ResponseEntity<Map<String,Object>> getTopFilms(
-            @RequestParam(required = false, defaultValue = "10") String limit,
+            @RequestParam(required = false, defaultValue = "10", name = "limit") String limitStr,
             @RequestParam(required = false) Optional<String> start,
             @RequestParam(required = false) Optional<String> end) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         LocalDateTime startDatetime, endDateTime;
+        int limit = 10;
         Map<String,Object> response = new HashMap<>();
         try {
             if(start.isPresent()) startDatetime = LocalDateTime.parse(start.get(), dateTimeFormatter);
             else startDatetime = LocalDateTime.parse("1900-12-03T10:15:30", dateTimeFormatter);
             if(end.isPresent()) endDateTime = LocalDateTime.parse(end.get(), dateTimeFormatter);
             else endDateTime = LocalDateTime.parse("2900-12-03T10:15:30",dateTimeFormatter);
-        }catch (DateTimeParseException e){
-            response.put("Error", "Date parsing error");
+            limit = Integer.parseInt(limitStr);
+        }catch (DateTimeParseException | NumberFormatException e){
+            response.put("Error", "Parsing error");
             return ResponseEntity.badRequest().body(response);
         }
         response.put("startDate", startDatetime);
@@ -90,8 +92,39 @@ public class DataController {
                 Arrays.asList(TicketStatus.reserved, TicketStatus.checked),
                 startDatetime, endDateTime);
         ticketsCountList.sort(Comparator.comparingLong(TicketsCount::getCount));
+        ticketsCountList = ticketsCountList.subList(0, limit);
         response.put("topList", ticketsCountList);
 
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/stats/genre/top")
+    public ResponseEntity<Map<String,Object>> getTopGenres(
+            @RequestParam(required = false, defaultValue = "10", name = "limit") String limitStr,
+            @RequestParam(required = false) Optional<String> start,
+            @RequestParam(required = false) Optional<String> end) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        LocalDateTime startDatetime, endDateTime;
+        Map<String,Object> response = new HashMap<>();
+        int limit = 10;
+        try {
+            if(start.isPresent()) startDatetime = LocalDateTime.parse(start.get(), dateTimeFormatter);
+            else startDatetime = LocalDateTime.parse("1900-12-03T10:15:30", dateTimeFormatter);
+            if(end.isPresent()) endDateTime = LocalDateTime.parse(end.get(), dateTimeFormatter);
+            else endDateTime = LocalDateTime.parse("2900-12-03T10:15:30",dateTimeFormatter);
+            limit = Integer.parseInt(limitStr);
+        }catch (DateTimeParseException e){
+            response.put("Error", "Date parsing error");
+            return ResponseEntity.badRequest().body(response);
+        }
+        response.put("startDate", startDatetime);
+        response.put("endDate", endDateTime);
+        response.put("limit", limit);
+        List<GenreCount> genreCountList =
+                genreService.countTicketsForAllGenres(startDatetime, endDateTime);
+        genreCountList.sort(Comparator.comparingLong(GenreCount::getCount));
+        genreCountList.subList(0, limit);
+        response.put("topList", genreCountList);
         return ResponseEntity.ok(response);
     }
 
