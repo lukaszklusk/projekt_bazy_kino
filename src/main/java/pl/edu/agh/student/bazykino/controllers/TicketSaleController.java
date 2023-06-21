@@ -45,15 +45,26 @@ public class TicketSaleController {
         );
     }
 
-    @PostMapping("/tickets")
-    public ResponseEntity<Ticket> buyTicket(@RequestBody Map<String, Object> payload){
-        if(!payload.containsKey("seatRow") || !payload.containsKey("seatColumn")
-                || !payload.containsKey("showing"))
+    @GetMapping("/showings/{id}/tickets/{tid}")
+    public ResponseEntity<Ticket> getTicketInShowing(@PathVariable long id,
+                                                     @PathVariable long tid){
+        Optional<Showing> showingOptional = showingService.getShowingById(id);
+        if(showingOptional.isEmpty()) return ResponseEntity.notFound().build();
+        else {
+            Optional<Ticket> ticketOptional = ticketService.getTicketById(tid);
+            if(ticketOptional.isEmpty()) return ResponseEntity.notFound().build();
+            else return ResponseEntity.ok(ticketOptional.get());
+        }
+    }
+
+    @PostMapping("showings/{id}/tickets")
+    public ResponseEntity<Ticket> buyTicket(@PathVariable long id,
+                                            @RequestBody Map<String, Object> payload){
+        if(!payload.containsKey("seatRow") || !payload.containsKey("seatColumn"))
             return ResponseEntity.badRequest().build();
         int seatColumn = (Integer) payload.get("seatColumn");
         int seatRow = (Integer) payload.get("seatRow");
-        long showingId = Integer.toUnsignedLong((Integer) payload.get("showing"));
-        Optional<Showing> showingOptional = showingService.getShowingById(showingId);
+        Optional<Showing> showingOptional = showingService.getShowingById(id);
         if(showingOptional.isEmpty()) return ResponseEntity.notFound().build();
         else{
             if(showingOptional.get().getScreen().getN_rows() < seatRow ||
@@ -66,6 +77,23 @@ public class TicketSaleController {
                     seatColumn, seatRow, showingOptional.get());
             if(newTicket != null) return ResponseEntity.ok(newTicket);
             else return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PatchMapping("/tickets/{id}")
+    public ResponseEntity<Ticket> changeTicketStatus(@PathVariable long id,
+                                                     @RequestBody Map<String, Object> payload){
+        if(!payload.containsKey("status")) return ResponseEntity.badRequest().build();
+        Optional<Ticket> ticketOptional = ticketService.getTicketById(id);
+        if(ticketOptional.isEmpty()) return ResponseEntity.notFound().build();
+        else {
+            String statusStr = (String) payload.get("status");
+            if(!statusStr.equals("reserved")
+                    && !statusStr.equals("cancelled")
+                    && !statusStr.equals("checked"))
+                return ResponseEntity.badRequest().build();
+            TicketStatus status = TicketStatus.valueOf((String) payload.get("status"));
+            return ResponseEntity.ok(ticketService.setTicketStatus(ticketOptional.get(),status));
         }
     }
 

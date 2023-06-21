@@ -48,13 +48,8 @@ public class TicketService {
         return ticketRepository.saveAndFlush(newTicket);
     }
 
-    public Ticket checkTicket(Ticket ticket){
-        ticket.setStatus(TicketStatus.checked);
-        return ticketRepository.save(ticket);
-    }
-
-    public Ticket cancelTicket(Ticket ticket){
-        ticket.setStatus(TicketStatus.cancelled);
+    public Ticket setTicketStatus(Ticket ticket, TicketStatus status){
+        ticket.setStatus(status);
         return ticketRepository.save(ticket);
     }
 
