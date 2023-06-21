@@ -28,7 +28,7 @@ public class FilmService {
         return filmRepository.getFilmByTitle(title);
     }
 
-    public Film addFilm(Film film){
+    public Film saveFilm(Film film){
         return filmRepository.save(film);
     }
 
