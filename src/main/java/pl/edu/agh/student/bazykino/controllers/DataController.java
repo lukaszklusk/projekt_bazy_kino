@@ -92,7 +92,7 @@ public class DataController {
                 Arrays.asList(TicketStatus.reserved, TicketStatus.checked),
                 startDatetime, endDateTime);
         ticketsCountList.sort(Comparator.comparingLong(TicketsCount::getCount));
-        ticketsCountList = ticketsCountList.subList(0, limit);
+        if(ticketsCountList.size() > 0) ticketsCountList = ticketsCountList.subList(0,Math.min(limit, ticketsCountList.size()-1));
         response.put("topList", ticketsCountList);
 
         return ResponseEntity.ok(response);
@@ -123,7 +123,7 @@ public class DataController {
         List<GenreCount> genreCountList =
                 genreService.countTicketsForAllGenres(startDatetime, endDateTime);
         genreCountList.sort(Comparator.comparingLong(GenreCount::getCount));
-        genreCountList.subList(0, limit);
+        if(genreCountList.size() > 0)genreCountList.subList(0, Math.min(limit, genreCountList.size()-1));
         response.put("topList", genreCountList);
         return ResponseEntity.ok(response);
     }
