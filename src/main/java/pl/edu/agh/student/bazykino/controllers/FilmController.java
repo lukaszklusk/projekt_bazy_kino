@@ -92,4 +92,14 @@ public class FilmController {
             }
         }
     }
+
+    @DeleteMapping("/film/{id}")
+    public ResponseEntity<Film> deleteFilm(@PathVariable long id){
+        Optional<Film> filmOptional = filmService.getFilmById(id);
+        if(filmOptional.isEmpty()) return ResponseEntity.notFound().build();
+        else {
+            filmService.deleteFilm(filmOptional.get());
+            return ResponseEntity.ok(filmOptional.get());
+        }
+    }
 }
