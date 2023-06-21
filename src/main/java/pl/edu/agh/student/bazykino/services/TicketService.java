@@ -2,12 +2,10 @@ package pl.edu.agh.student.bazykino.services;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import pl.edu.agh.student.bazykino.model.Showing;
-import pl.edu.agh.student.bazykino.model.Ticket;
-import pl.edu.agh.student.bazykino.model.TicketStatus;
+import pl.edu.agh.student.bazykino.model.*;
 import pl.edu.agh.student.bazykino.repositories.TicketRepository;
 
-import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -53,7 +51,17 @@ public class TicketService {
         return ticketRepository.save(ticket);
     }
 
+    public int countTicketsForShowingsWithStatus(Collection<Showing> showings, Collection<TicketStatus> statuses){
+        return ticketRepository.countAllByShowingInAndStatusIn(showings, statuses);
+    }
+
     public void deleteTicket(Ticket ticket){
         ticketRepository.delete(ticket);
+    }
+
+    public List<TicketsCount> countTicketsForAllFilmsAndStatus(Collection<TicketStatus> statuses,
+                                                               LocalDateTime start,
+                                                               LocalDateTime end){
+        return ticketRepository.getTicketCountForAllFilmsAndStatus(statuses, start, end);
     }
 }

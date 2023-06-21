@@ -102,5 +102,4 @@ public class TicketSaleController {
         return ResponseEntity.badRequest().body("Ticket already reserved");
     }
 
-
 }

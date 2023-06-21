@@ -1,6 +1,7 @@
 package pl.edu.agh.student.bazykino.services;
 
 import org.springframework.stereotype.Service;
+import pl.edu.agh.student.bazykino.model.Film;
 import pl.edu.agh.student.bazykino.model.Showing;
 import pl.edu.agh.student.bazykino.repositories.ShowingRepository;
 
@@ -26,6 +27,10 @@ public class ShowingService {
 
     public Optional<Showing> getShowingById(long id){
         return showingRepository.findById(id);
+    }
+
+    public List<Showing> getShowingsByFilm(Film film){
+        return showingRepository.getAllByFilm(film);
     }
 
     public void deleteShowing(Showing showing){
