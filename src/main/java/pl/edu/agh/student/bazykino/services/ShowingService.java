@@ -5,6 +5,7 @@ import pl.edu.agh.student.bazykino.model.Showing;
 import pl.edu.agh.student.bazykino.repositories.ShowingRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ShowingService {
@@ -19,7 +20,15 @@ public class ShowingService {
         return showingRepository.findAll();
     }
 
-    public Showing addShowing(Showing showing){
+    public Showing saveShowing(Showing showing){
         return showingRepository.save(showing);
+    }
+
+    public Optional<Showing> getShowingById(long id){
+        return showingRepository.findById(id);
+    }
+
+    public void deleteShowing(Showing showing){
+        showingRepository.delete(showing);
     }
 }
