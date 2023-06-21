@@ -23,6 +23,13 @@ public class ScreenController {
         return ResponseEntity.ok(screenService.getAllScreens());
     }
 
+    @GetMapping("/screen/{id}")
+    public ResponseEntity<Screen> getScreenById(@PathVariable long id){
+        Optional<Screen> screenOptional = screenService.getScreenById(id);
+        if(screenOptional.isPresent()) return ResponseEntity.ok(screenOptional.get());
+        else return ResponseEntity.notFound().build();
+    }
+
     @PostMapping("/screen")
     public ResponseEntity<Screen> addScreen(@RequestBody Map<String, Object> payload){
         if(!payload.containsKey("screenNumber") || !payload.containsKey("n_rows") ||
